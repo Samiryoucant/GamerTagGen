@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlimited Gaming Username Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .glow-text {
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.7), 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        .username-display {
+            min-height: 4rem;
+            transition: all 0.3s ease;
+        }
+        .copy-btn {
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-12 flex-grow">
+        <div class="max-w-3xl mx-auto">
+            <!-- Header -->
+            <header class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4 glow-text text-blue-400">GamerTag<span class="text-white">Gen</span></h1>
+                <p class="text-gray-300 text-lg">Generate unique gaming usernames that will never repeat</p>
+            </header>
+
+            <!-- Main Generator Card -->
+            <div class="bg-gray-800 rounded-xl shadow-2xl overflow-hidden border border-gray-700">
+                <div class="p-6 md:p-8">
+                    <!-- Username Display -->
+                    <div class="bg-gray-900 rounded-lg p-6 mb-8 flex flex-col items-center justify-center username-display">
+                        <div id="username" class="text-2xl md:text-3xl font-mono font-bold text-center text-blue-400 mb-4"></div>
+                        <button id="copyBtn" class="copy-btn bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full flex items-center gap-2">
+                            <i class="fas fa-copy"></i>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+
+                    <!-- Generator Controls -->
+                    <div class="space-y-6">
+                        <!-- Theme Selection -->
+                        <div>
+                            <label class="block text-gray-300 mb-2">Username Theme</label>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                <button data-theme="fantasy" class="theme-btn bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded-lg transition">Fantasy</button>
+                                <button data-theme="scifi" class="theme-btn bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded-lg transition">Sci-Fi</button>
+                                <button data-theme="anime" class="theme-btn bg-gray-700 hover:bg-gray-600 py-2 px-4 rounded-lg transition">Anime</button>
+                                <button data-theme="random" class="theme-btn bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg transition">Random</button>
+                            </div>
+                        </div>
+
+                        <!-- Length Slider -->
+                        <div>
+                            <label for="lengthSlider" class="block text-gray-300 mb-2">Username Length: <span id="lengthValue">8-12</span></label>
+                            <input type="range" id="lengthSlider" min="4" max="20" value="12" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                        </div>
+
+                        <!-- Include Numbers -->
+                        <div class="flex items-center">
+                            <input type="checkbox" id="includeNumbers" checked class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
+                            <label for="includeNumbers" class="ml-2 text-gray-300">Include Numbers</label>
+                        </div>
+
+                        <!-- Include Special Chars -->
+                        <div class="flex items-center">
+                            <input type="checkbox" id="includeSpecial" class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500">
+                            <label for="includeSpecial" class="ml-2 text-gray-300">Include Special Characters</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generate Button -->
+                <div class="bg-gray-900 px-6 py-4 border-t border-gray-700">
+                    <button id="generateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg pulse flex items-center justify-center gap-2">
+                        <i class="fas fa-dice"></i>
+                        <span>Generate Unique Username</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <div class="text-blue-400 text-2xl font-bold" id="generatedCount">0</div>
+                    <div class="text-gray-400">Generated</div>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <div class="text-green-400 text-2xl font-bold" id="uniqueCount">0</div>
+                    <div class="text-gray-400">Unique</div>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <div class="text-purple-400 text-2xl font-bold" id="copiedCount">0</div>
+                    <div class="text-gray-400">Copied</div>
+                </div>
+                <div class="bg-gray-800 p-4 rounded-lg">
+                    <div class="text-yellow-400 text-2xl font-bold" id="remainingCount">∞</div>
+                    <div class="text-gray-400">Remaining</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-6 border-t border-gray-700">
+        <div class="container mx-auto px-4 text-center text-gray-400">
+            <p>© 2023 GamerTagGen - Never run out of unique usernames</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const usernameEl = document.getElementById('username');
+            const generateBtn = document.getElementById('generateBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const lengthSlider = document.getElementById('lengthSlider');
+            const lengthValue = document.getElementById('lengthValue');
+            const includeNumbers = document.getElementById('includeNumbers');
+            const includeSpecial = document.getElementById('includeSpecial');
+            const themeBtns = document.querySelectorAll('.theme-btn');
+            const generatedCountEl = document.getElementById('generatedCount');
+            const uniqueCountEl = document.getElementById('uniqueCount');
+            const copiedCountEl = document.getElementById('copiedCount');
+            const remainingCountEl = document.getElementById('remainingCount');
+
+            // Stats
+            let generatedCount = 0;
+            let uniqueCount = 0;
+            let copiedCount = 0;
+            
+            // Load stats from localStorage
+            if (localStorage.getItem('generatedCount')) {
+                generatedCount = parseInt(localStorage.getItem('generatedCount'));
+                generatedCountEl.textContent = generatedCount.toLocaleString();
+            }
+            
+            if (localStorage.getItem('uniqueCount')) {
+                uniqueCount = parseInt(localStorage.getItem('uniqueCount'));
+                uniqueCountEl.textContent = uniqueCount.toLocaleString();
+            }
+            
+            if (localStorage.getItem('copiedCount')) {
+                copiedCount = parseInt(localStorage.getItem('copiedCount'));
+                copiedCountEl.textContent = copiedCount.toLocaleString();
+            }
+
+            // Load used usernames
+            let usedUsernames = new Set();
+            if (localStorage.getItem('usedUsernames')) {
+                usedUsernames = new Set(JSON.parse(localStorage.getItem('usedUsernames')));
+            }
+
+            // Current theme
+            let currentTheme = 'random';
+
+            // Update length display
+            lengthSlider.addEventListener('input', function() {
+                lengthValue.textContent = `4-${this.value}`;
+            });
+
+            // Theme selection
+            themeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    themeBtns.forEach(b => b.classList.remove('bg-blue-600', 'hover:bg-blue-700'));
+                    themeBtns.forEach(b => b.classList.add('bg-gray-700', 'hover:bg-gray-600'));
+                    this.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+                    this.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    currentTheme = this.dataset.theme;
+                });
+            });
+
+            // Word banks for different themes
+            const wordBanks = {
+                fantasy: [
+                    'Dragon', 'Knight', 'Wizard', 'Elf', 'Dwarf', 'Orc', 'Troll', 'Goblin', 'Mage', 'Sorcerer',
+                    'Paladin', 'Ranger', 'Bard', 'Rogue', 'Necro', 'Shadow', 'Frost', 'Flame', 'Storm', 'Thunder',
+                    'Blade', 'Bow', 'Axe', 'Shield', 'Armor', 'Helm', 'Gauntlet', 'Cloak', 'Amulet', 'Ring',
+                    'Phoenix', 'Griffin', 'Basilisk', 'Hydra', 'Werewolf', 'Vampire', 'Ghost', 'Specter', 'Wraith', 'Lich',
+                    'Mystic', 'Arcane', 'Elder', 'Ancient', 'Forgotten', 'Lost', 'Hidden', 'Secret', 'Dark', 'Light'
+                ],
+                scifi: [
+                    'Cyber', 'Neon', 'Quantum', 'Nova', 'Photon', 'Plasma', 'Gamma', 'Xeno', 'Astro', 'Cosmo',
+                    'Orbit', 'Void', 'Singularity', 'Warp', 'Hyper', 'Mega', 'Giga', 'Tera', 'Peta', 'Exa',
+                    'Drone', 'Android', 'Cyborg', 'AI', 'Robot', 'Mech', 'Nanobot', 'Droid', 'Synth', 'Clone',
+                    'Starship', 'Cruiser', 'Frigate', 'Destroyer', 'Battleship', 'Carrier', 'Explorer', 'Scout', 'Fighter', 'Interceptor',
+                    'Holo', 'Matrix', 'Grid', 'Node', 'Core', 'Mainframe', 'Protocol', 'Firewall', 'Virus', 'Worm'
+                ],
+                anime: [
+                    'Senpai', 'Kohai', 'Sensei', 'Samurai', 'Ninja', 'Shinobi', 'Kunoichi', 'Ronin', 'Bushido', 'Katana',
+                    'Oni', 'Kitsune', 'Tengu', 'Yokai', 'Yurei', 'Onmyoji', 'Shaman', 'Miko', 'Priestess', 'Oracle',
+                    'Chibi', 'Kawaii', 'Sugoi', 'Baka', 'UwU', 'OwO', 'Nya', 'Desu', 'Hai', 'Arigato',
+                    'Shonen', 'Shojo', 'Seinen', 'Josei', 'Isekai', 'Mecha', 'Magical', 'Idol', 'Otaku', 'Weeb',
+                    'Hikari', 'Yami', 'Kaze', 'Mizu', 'Hi', 'Tsuki', 'Hoshi', 'Sora', 'Tsuchi', 'Raiden'
+                ],
+                random: [
+                    'Shadow', 'Phantom', 'Ghost', 'Specter', 'Wraith', 'Reaper', 'Hunter', 'Stalker', 'Predator', 'Assassin',
+                    'Blade', 'Fang', 'Claw', 'Strike', 'Slash', 'Cut', 'Slice', 'Pierce', 'Impale', 'Stab',
+                    'Storm', 'Thunder', 'Lightning', 'Hurricane', 'Typhoon', 'Tornado', 'Cyclone', 'Tempest', 'Monsoon', 'Gale',
+                    'Inferno', 'Blaze', 'Flame', 'Fire', 'Ember', 'Spark', 'Cinder', 'Ash', 'Smoke', 'Pyro',
+                    'Frost', 'Ice', 'Glacier', 'Blizzard', 'Hail', 'Freeze', 'Chill', 'Winter', 'Snow', 'Aurora'
+                ]
+            };
+
+            // Special characters
+            const specialChars = ['_', '-', '.', '!', '@', '#', '$', '%', '^', '&', '*'];
+
+            // Generate username
+            function generateUsername() {
+                const minLength = 4;
+                const maxLength = parseInt(lengthSlider.value);
+                const useNumbers = includeNumbers.checked;
+                const useSpecial = includeSpecial.checked;
+                
+                let username;
+                let attempts = 0;
+                const maxAttempts = 100;
+                
+                do {
+                    // Select random words from the current theme
+                    const words = wordBanks[currentTheme];
+                    let word1 = words[Math.floor(Math.random() * words.length)];
+                    let word2 = words[Math.floor(Math.random() * words.length)];
+                    
+                    // Sometimes use just one word
+                    if (Math.random() > 0.7) {
+                        word2 = '';
+                    }
+                    
+                    // Combine words
+                    username = word1 + word2;
+                    
+                    // Shorten if too long
+                    if (username.length > maxLength) {
+                        username = username.substring(0, maxLength);
+                    }
+                    
+                    // Add numbers if enabled
+                    if (useNumbers) {
+                        const numCount = Math.floor(Math.random() * 3) + 1;
+                        const numbers = Math.floor(Math.random() * Math.pow(10, numCount)).toString();
+                        username += numbers;
+                        
+                        // Shorten again if needed
+                        if (username.length > maxLength) {
+                            username = username.substring(0, maxLength);
+                        }
+                    }
+                    
+                    // Add special characters if enabled
+                    if (useSpecial && username.length < maxLength) {
+                        const specialChar = specialChars[Math.floor(Math.random() * specialChars.length)];
+                        const position = Math.floor(Math.random() * username.length);
+                        username = username.substring(0, position) + specialChar + username.substring(position);
+                        
+                        // Shorten again if needed
+                        if (username.length > maxLength) {
+                            username = username.substring(0, maxLength);
+                        }
+                    }
+                    
+                    // Ensure minimum length
+                    while (username.length < minLength) {
+                        username += Math.floor(Math.random() * 10).toString();
+                    }
+                    
+                    attempts++;
+                    if (attempts >= maxAttempts) {
+                        // If we can't find a unique name after many attempts, add a random suffix
+                        username += '_' + Math.floor(Math.random() * 10000).toString();
+                        break;
+                    }
+                } while (usedUsernames.has(username));
+                
+                // Add to used usernames
+                usedUsernames.add(username);
+                localStorage.setItem('usedUsernames', JSON.stringify(Array.from(usedUsernames)));
+                
+                // Update stats
+                generatedCount++;
+                uniqueCount++;
+                generatedCountEl.textContent = generatedCount.toLocaleString();
+                uniqueCountEl.textContent = uniqueCount.toLocaleString();
+                localStorage.setItem('generatedCount', generatedCount);
+                localStorage.setItem('uniqueCount', uniqueCount);
+                
+                // Calculate remaining possible combinations (very rough estimate)
+                const wordCount = wordBanks[currentTheme].length;
+                const numberCombos = useNumbers ? 1000 : 1;
+                const specialCombos = useSpecial ? specialChars.length + 1 : 1;
+                const remaining = (wordCount * wordCount * numberCombos * specialCombos) - usedUsernames.size;
+                remainingCountEl.textContent = remaining > 10000 ? '∞' : remaining.toLocaleString();
+                
+                return username;
+            }
+
+            // Generate button click
+            generateBtn.addEventListener('click', function() {
+                usernameEl.textContent = generateUsername();
+            });
+
+            // Copy button click
+            copyBtn.addEventListener('click', function() {
+                if (usernameEl.textContent) {
+                    navigator.clipboard.writeText(usernameEl.textContent).then(() => {
+                        const originalText = copyBtn.innerHTML;
+                        copyBtn.innerHTML = '<i class="fas fa-check"></i> <span>Copied!</span>';
+                        copiedCount++;
+                        copiedCountEl.textContent = copiedCount.toLocaleString();
+                        localStorage.setItem('copiedCount', copiedCount);
+                        
+                        setTimeout(() => {
+                            copyBtn.innerHTML = originalText;
+                        }, 2000);
+                    });
+                }
+            });
+
+            // Generate initial username
+            usernameEl.textContent = generateUsername();
+        });
+    </script>
+</body>
+</html>
